@@ -1,9 +1,4 @@
 
-/*
-TXD is orange
-RXD is yellow
-*/
-
 #include <stdio.h>
 #include <string.h>
 
