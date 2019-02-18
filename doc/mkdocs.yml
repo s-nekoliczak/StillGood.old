@@ -1,0 +1,6 @@
+site_name: StillGood
+
+nav:
+    - Home: index.md
+    - About: about.md
+theme: readthedocs
