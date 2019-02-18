@@ -94,7 +94,8 @@ On failure, `my_payload` will be untouched and `retval` will be set to `0`.
 
 
 
-#`write_block()`
+# `write_block()`
+
 `write_block(unsigned char* payload, unsigned char addr)`
 
 **Description**  
