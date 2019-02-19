@@ -97,10 +97,10 @@ uint8_t wakeup() {
     uart_transmit_string(cmd, 24);
     uart_wait_for_reply();
     unsigned char rep[WAKEUP_REPLY_MAX_SIZE];
-    uart_copy_clear(rep, WAKEUP_REPLY_MAX_SIZE);
+    uint16_t rep_len = uart_copy_clear(rep);
 
     uint8_t retval = 0;
-    if (__is_reply_successful(rep, WAKEUP_REPLY_MAX_SIZE, WAKEUP_SUCCESS_CODE, 0)) {
+    if (__is_reply_successful(rep, rep_len, WAKEUP_SUCCESS_CODE, 0)) {
         retval = 1;
     }
 
@@ -122,11 +122,11 @@ uint8_t inlistpsvtarget() {
     uart_wait_for_reply();
 
     unsigned char rep[LIST_REPLY_MAX_SIZE];
-    uart_copy_clear(rep, LIST_REPLY_MAX_SIZE);
+    uint16_t rep_len = uart_copy_clear(rep);
 
     uint8_t retval = 0;
     uint8_t rep_idx = 0;
-    if ((rep_idx = __is_reply_successful(rep, LIST_REPLY_MAX_SIZE, LIST_SUCCESS_CODE, 0))) {
+    if ((rep_idx = __is_reply_successful(rep, rep_len, LIST_SUCCESS_CODE, 0))) {
         retval = 1;
 
         i = 0;
@@ -165,10 +165,10 @@ uint8_t authenticate() {
     uart_transmit_string(cmd, AUTH_CMD_SIZE);
     uart_wait_for_reply();
     unsigned char rep[AUTH_REPLY_MAX_SIZE];
-    uart_copy_clear(rep, AUTH_REPLY_MAX_SIZE);
+    uint16_t rep_len = uart_copy_clear(rep);
 
     uint8_t retval = 0;
-    if (__is_reply_successful(rep, AUTH_REPLY_MAX_SIZE, AUTH_SUCCESS_CODE, 1)) {
+    if (__is_reply_successful(rep, rep_len, AUTH_SUCCESS_CODE, 1)) {
         retval = 1;
     }
 
@@ -190,11 +190,11 @@ uint8_t read_block(unsigned char* payload, unsigned char addr) {
     uart_transmit_string(cmd, READ_CMD_SIZE);
     uart_wait_for_reply();
     unsigned char rep[READ_REPLY_MAX_SIZE];
-    uart_copy_clear(rep, READ_REPLY_MAX_SIZE);
+    uint16_t rep_len = uart_copy_clear(rep);
 
     uint8_t retval = 0;
     uint8_t rep_idx = 0;
-    if ((rep_idx = __is_reply_successful(rep, READ_REPLY_MAX_SIZE, READ_SUCCESS_CODE, 1))) {
+    if ((rep_idx = __is_reply_successful(rep, rep_len, READ_SUCCESS_CODE, 1))) {
         retval = 1;
 
         i = 0;
@@ -226,10 +226,10 @@ uint8_t write_block(unsigned char* payload, unsigned char addr) {
     uart_transmit_string(cmd, WRITE_CMD_SIZE);
     uart_wait_for_reply();
     unsigned char rep[WRITE_REPLY_MAX_SIZE];
-    uart_copy_clear(rep, WRITE_REPLY_MAX_SIZE);
+    uint16_t rep_len = uart_copy_clear(rep);
 
     uint8_t retval = 0;
-    if (__is_reply_successful(rep, WRITE_REPLY_MAX_SIZE, WRITE_SUCCESS_CODE, 1)) {
+    if (__is_reply_successful(rep, rep_len, WRITE_SUCCESS_CODE, 1)) {
         retval = 1;
     }
 

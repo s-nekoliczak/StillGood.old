@@ -80,8 +80,10 @@ void __clear_g_rcv() {
 // Copies contents to dest array and clears __g_rcv for future use.
 // Always call this after calling uart_transmit_string to keep __g_rcv buffer
 // clear.
-void uart_copy_clear(unsigned char* dest, uint16_t len) {
-    memcpy(dest, __g_rcv, len);
+uint16_t uart_copy_clear(unsigned char* dest) {
+    memcpy(dest, __g_rcv, __g_rcv_i);
+    uint16_t len = __g_rcv_i;
     __clear_g_rcv();
+    return len;
 }
 

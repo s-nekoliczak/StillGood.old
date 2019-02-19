@@ -16,5 +16,5 @@ void uart_wait_for_reply();
 
 void __clear_g_rcv();
 
-void uart_copy_clear(unsigned char* dest, uint16_t len);
+uint16_t uart_copy_clear(unsigned char* dest);
 
