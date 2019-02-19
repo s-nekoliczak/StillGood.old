@@ -4,8 +4,8 @@ This article describes the functions available in the NFC library in nfc.c, how 
 
 This library is for use with the ATMega328P MCU, NFC Module for Arduino (SKU:DFR0231 at https://dfrobot.com), and with ISO-14443A/Mifare NFC tags.
 
-
-## Typical workflow
+---
+# Typical Workflow
 
 1. `wakeup()`  
 Wakeup the device from sleep.
@@ -19,9 +19,10 @@ Authenticate the nearby tag.
 5. `sleep()`  
 Set the device to sleep.
 
-
+---
 # Functions
 
+---
 # `wakeup()`
 `uint8_t wakeup()`
 
@@ -31,10 +32,7 @@ Wakeup the NFC module from sleep mode.
 **Return Values**  
 This function returns a `1` on success and a `0` on failure.  
 
-
-
-
-
+---
 # `inlistpsvtarget()`
 
 `uint8_t inlistpsvtarget()`
@@ -46,10 +44,7 @@ The tag's UID will be saved internally in the `__g_uid` array of type `unsigned 
 **Return Values**  
 This function returns a `1` on success and a `0` on failure.  
 
-
-
-
-
+---
 # `authenticate()`
 `uint8_t authenticate()`
 
@@ -59,10 +54,7 @@ Authenticate the nearby NFC tag.
 **Return Values**  
 This function returns a `1` on success and a `0` on failure.  
 
-
-
-
-
+---
 # `read_block()`
 
 `uint8_t read_block(unsigned char* payload, unsigned char addr)`
@@ -70,7 +62,7 @@ This function returns a `1` on success and a `0` on failure.
 **Description**  
 `read_block()` copies the block from `addr` on the nearby tag to the `payload` array on the MCU.
 
-**Arguments**  
+**Paramters**  
 1. `unsigned char* payload`  
 A 16-byte array of type `unsigned char` that should be sent in blank.  
 2. `unsigned char addr`  
@@ -83,17 +75,14 @@ On success, the `payload` array will be populated with the data from 16-byte blo
 On failure, the `payload` array will be untouched.
 
 **Examples**
-```
+```C
 unsigned char my_payload[16];
 int retval = read_block(my_payload, 0x04);  
 ```
 On success, this copies the 16-byte block at NFC tag address `0x04` (bytes 64-79) to the `my_payload` array and sets `retval` to `1`.  
 On failure, `my_payload` will be untouched and `retval` will be set to `0`.
 
-
-
-
-
+---
 # `write_block()`
 
 `write_block(unsigned char* payload, unsigned char addr)`
@@ -101,7 +90,7 @@ On failure, `my_payload` will be untouched and `retval` will be set to `0`.
 **Description**  
 `write_block()` copies the data from `payload` to the block at `addr` on the nearby tag.
 
-**Arguments**  
+**Parameters**  
 1. `unsigned char* payload`  
 A 16-byte array of type `unsigned char` that should be sent in blank.  
 2. `unsigned char addr`  
@@ -114,10 +103,10 @@ On success, the 16-byte block at `addr` on the NFC tag will be set to the 16 byt
 On failure, the data on the NFC tag will be untouched.
 
 **Examples**
-```
+```C
 unsigned char my_payload[16];
 int retval = write_block(my_payload, 0x04);  
 ```
 On success, this copies the data in `payload` to the block at address `0x04` (bytes 64-79) on the NFC tag and `retval` will be set to `1`.  
-On failure, the NFC tag's data will be untouched `retval` will be set to `0`.
+On failure, the NFC tag's data will be untouched and `retval` will be set to `0`.
 

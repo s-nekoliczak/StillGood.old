@@ -4,4 +4,5 @@ nav:
     - Home: index.md
     - About: about.md
     - NFC: nfc.md
+    - UART: uart.md
 theme: readthedocs
