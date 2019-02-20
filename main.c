@@ -36,14 +36,14 @@ int main() {
     eeprom_read_bytes(0x003C, buf, 70);
     */
 
-    wakeup();
-    inlistpsvtarget();
-    authenticate();
+    nfc_wakeup();
+    nfc_inlistpsvtarget();
+    nfc_authenticate();
     unsigned char data[16] = {0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB};
-    write_block(data, 0x04);
+    nfc_write_block(data, 0x04);
 
     unsigned char payload[16];
-    read_block(payload, 0x04);
+    nfc_read_block(payload, 0x04);
 
     if (payload[0] == 0xAB) {
         PORTC |= (1<<PC5);

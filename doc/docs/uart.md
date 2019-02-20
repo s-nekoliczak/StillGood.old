@@ -18,9 +18,9 @@ Copy the receiver's reply to a local array and clear the receive buffer for futu
 ---
 # Notes On Receiving Data
 
-The interrupt service routine `ISR(USART_RX_vect)` copies incoming data into the internal receive buffer `__g_rcv[]`. The size of `__g_rcv[]` is tracked with the `__g_rcv_i` internal variable.
+The interrupt service routine `ISR(USART_RX_vect)` copies incoming data into the internal receive buffer `__uart_rcv_buf[]`. The size of `__uart_rcv_buf[]` is tracked with the `__uart_rcv_buf_i` internal variable.
 
-Try to avoid using `__g_rcv[]` and `__g_rcv_i` directly, as misusing these variables might produce some unwanted results. Instead, try using the functions `uart_copy_clear()` (to access the receive buffer `__g_rcv[]`) and `rcv_buf_size()` (to access `__g_rcv_i`).
+Try to avoid using `__uart_rcv_buf[]` and `__uart_rcv_buf_i` directly, as misusing these variables might produce some unwanted results. Instead, try using the functions `uart_copy_clear()` (to access the receive buffer `__uart_rcv_buf[]`) and `uart_rcv_buf_size()` (to access `__uart_rcv_buf_i`).
 
 ---
 # Functions
@@ -80,26 +80,26 @@ Use this when waiting for a reply after sending a command through `uart_transmit
 **Description**  
 `uart_copy_clear()` copies the data received from the UART to `dest[]`.
 `dest[]` should be sent in blank, as all data in the array will be wiped.  
-After that copy, all data in `__g_rcv[]` will be set to 0 and `__g_rcv_i` will be set to 0.
+After that copy, all data in `__uart_rcv_buf[]` will be set to 0 and `__uart_rcv_buf_i` will be set to 0.
 
 **Parameters**  
 1. `unsigned char* dest`  
-An array that receives a copy of the data from `__g_rcv[]`.
+An array that receives a copy of the data from `__uart_rcv_buf[]`.
 
 **Return Values**  
-This function returns `__g_rcv_i`, which is the size of the receive buffer `__g_rcv[]`.
+This function returns `__uart_rcv_buf_i`, which is the size of the receive buffer `__uart_rcv_buf[]`.
 
-Data from `__g_rcv[]` is copied to `dest[]`.
+Data from `__uart_rcv_buf[]` is copied to `dest[]`.
 
 **Examples**
 ```C
 /*
 Assume the following:
-*__g_rcv = {0x0A, 0x0B, 0x0C};
-__g_rcv_i = 3;
+*__uart_rcv_buf = {0x0A, 0x0B, 0x0C};
+__uart_rcv_buf_i = 3;
 */
 unsigned char my_data[16];
 uint16_t len = uart_copy_clear(my_data);
 ```
-`my_data` will contain `{0x0A, 0x0B, 0x0C}` and `len` will be `3`. All data in `__g_rcv[]` will be set to 0 and `__g_rcv_i` will be set to 0.
+`my_data` will contain `{0x0A, 0x0B, 0x0C}` and `len` will be `3`. All data in `__uart_rcv_buf[]` will be set to 0 and `__uart_rcv_buf_i` will be set to 0.
 

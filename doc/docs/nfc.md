@@ -7,15 +7,15 @@ This library is for use with the ATMega328P MCU, NFC Module for Arduino (SKU:DFR
 ---
 # Typical Workflow
 
-1. `wakeup()`  
+1. `nfc_wakeup()`  
 Wakeup the device from sleep.
-2. `inlistpsvtarget()`  
+2. `nfc_inlistpsvtarget()`  
 Retrieve the logical number and UID of the nearby tag.
-3. `authenticate()`  
+3. `nfc_authenticate()`  
 Authenticate the nearby tag.
 4. At this point, we can read from and write to the nearby tag.
-    1. `read_block()`
-    2. `write_block()`
+    1. `nfc_read_block()`
+    2. `nfc_write_block()`
 5. `sleep()`  
 Set the device to sleep.
 
@@ -23,8 +23,9 @@ Set the device to sleep.
 # Functions
 
 ---
-# `wakeup()`
-`uint8_t wakeup()`
+# `nfc_wakeup()`
+
+`uint8_t nfc_wakeup()`
 
 **Description**  
 Wakeup the NFC module from sleep mode.
@@ -33,9 +34,9 @@ Wakeup the NFC module from sleep mode.
 This function returns a `1` on success and a `0` on failure.  
 
 ---
-# `inlistpsvtarget()`
+# `nfc_inlistpsvtarget()`
 
-`uint8_t inlistpsvtarget()`
+`uint8_t nfc_inlistpsvtarget()`
 
 **Description**  
 Assign a nearby tag to a logical number. Since this library only supports one nearby tag, this logical number will always be 1.  
@@ -45,8 +46,8 @@ The tag's UID will be saved internally in the `__g_uid` array of type `unsigned 
 This function returns a `1` on success and a `0` on failure.  
 
 ---
-# `authenticate()`
-`uint8_t authenticate()`
+# `nfc_authenticate()`
+`uint8_t nfc_authenticate()`
 
 **Description**  
 Authenticate the nearby NFC tag.
@@ -55,12 +56,12 @@ Authenticate the nearby NFC tag.
 This function returns a `1` on success and a `0` on failure.  
 
 ---
-# `read_block()`
+# `nfc_read_block()`
 
-`uint8_t read_block(unsigned char* payload, unsigned char addr)`
+`uint8_t nfc_read_block(unsigned char* payload, unsigned char addr)`
 
 **Description**  
-`read_block()` copies the block from `addr` on the nearby tag to the `payload` array on the MCU.
+`nfc_read_block()` copies the block from `addr` on the nearby tag to the `payload` array on the MCU.
 
 **Paramters**  
 1. `unsigned char* payload`  
@@ -77,18 +78,18 @@ On failure, the `payload` array will be untouched.
 **Examples**
 ```C
 unsigned char my_payload[16];
-int retval = read_block(my_payload, 0x04);  
+int retval = nfc_read_block(my_payload, 0x04);  
 ```
 On success, this copies the 16-byte block at NFC tag address `0x04` (bytes 64-79) to the `my_payload` array and sets `retval` to `1`.  
 On failure, `my_payload` will be untouched and `retval` will be set to `0`.
 
 ---
-# `write_block()`
+# `nfc_write_block()`
 
-`write_block(unsigned char* payload, unsigned char addr)`
+`nfc_write_block(unsigned char* payload, unsigned char addr)`
 
 **Description**  
-`write_block()` copies the data from `payload` to the block at `addr` on the nearby tag.
+`nfc_write_block()` copies the data from `payload` to the block at `addr` on the nearby tag.
 
 **Parameters**  
 1. `unsigned char* payload`  
@@ -105,7 +106,7 @@ On failure, the data on the NFC tag will be untouched.
 **Examples**
 ```C
 unsigned char my_payload[16];
-int retval = write_block(my_payload, 0x04);  
+int retval = nfc_write_block(my_payload, 0x04);  
 ```
 On success, this copies the data in `payload` to the block at address `0x04` (bytes 64-79) on the NFC tag and `retval` will be set to `1`.  
 On failure, the NFC tag's data will be untouched and `retval` will be set to `0`.

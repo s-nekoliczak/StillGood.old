@@ -27,7 +27,6 @@
 #define WAKEUP_CMD_SIZE                 10
 #define WAKEUP_DATA_SIZE                2
 #define WAKEUP_SUCCESS_CODE             0x15
-#define WAKEUP_REPLY_MAX_SIZE           16
 #define WAKEUP_NORMAL_MODE              0x01
 
 //
@@ -37,7 +36,6 @@
 #define LIST_CMD_SIZE                   11
 #define LIST_DATA_SIZE                  3
 #define LIST_SUCCESS_CODE               0x4B
-#define LIST_REPLY_MAX_SIZE             32
 #define LIST_UID_SIZE                   4
 #define LIST_UID_OFFSET                 7   // Offset from success code index
                                             // to UID index.
@@ -53,14 +51,12 @@
 #define AUTH_MIFARE_CMD                 0x60
 #define AUTH_MIFARE_ADDR                0x07
 #define AUTH_SUCCESS_CODE               0x41
-#define AUTH_REPLY_MAX_SIZE             16
 
 // Read
 #define READ_CMD                        0x40
 #define READ_CMD_SIZE                   12
 #define READ_DATA_SIZE                  4
 #define READ_SUCCESS_CODE               0x41
-#define READ_REPLY_MAX_SIZE             64
 #define READ_MIFARE_CMD                 0x30
 #define READ_PAYLOAD_SIZE               16
 #define READ_PAYLOAD_OFFSET             2   // Offset from success code index
@@ -71,7 +67,6 @@
 #define WRITE_CMD_SIZE                  28
 #define WRITE_DATA_SIZE                 20
 #define WRITE_SUCCESS_CODE              0x41
-#define WRITE_REPLY_MAX_SIZE            64
 #define WRITE_MIFARE_CMD                0xA0
 #define WRITE_PAYLOAD_SIZE              16
 

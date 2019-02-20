@@ -9,12 +9,12 @@
 
 #define G_RCV_SIZE          256
 
-unsigned char __g_rcv[G_RCV_SIZE];
-unsigned char __g_rcv_i;
+unsigned char __uart_rcv_buf[G_RCV_SIZE];
+uint16_t __uart_rcv_buf_i;
 
 void init_uart(uint16_t baud) {
 
-    __g_rcv_i = 0;
+    __uart_rcv_buf_i = 0;
 
     UBRR0H = (baud>>8);
     UBRR0L = baud;
@@ -42,7 +42,7 @@ void init_uart(uint16_t baud) {
 
 
 ISR(USART_RX_vect) {
-    __g_rcv[__g_rcv_i++] = UDR0;
+    __uart_rcv_buf[__uart_rcv_buf_i++] = UDR0;
 }
 
 // Taken from atmega328p datasheet example
@@ -61,6 +61,10 @@ unsigned char __uart_receive(void)
     return UDR0;
 }
 
+uint16_t uart_rcv_buf_size() {
+    return __uart_rcv_buf_i;
+}
+
 void uart_transmit_string(unsigned char* str, uint16_t len) {
     for (uint16_t i = 0; i < len; ++i) {
         __uart_transmit(str[i]);
@@ -72,18 +76,18 @@ void uart_wait_for_reply() {
     _delay_ms(500);
 }
 
-void __clear_g_rcv() {
-    memset(__g_rcv, 0, G_RCV_SIZE);
-    __g_rcv_i = 0;
+void __uart_clear_rcv_buf() {
+    memset(__uart_rcv_buf, 0, G_RCV_SIZE);
+    __uart_rcv_buf_i = 0;
 }
 
-// Copies contents to dest array and clears __g_rcv for future use.
-// Always call this after calling uart_transmit_string to keep __g_rcv buffer
+// Copies contents to dest array and clears __uart_rcv_buf for future use.
+// Always call this after calling uart_transmit_string to keep __uart_rcv_buf buffer
 // clear.
 uint16_t uart_copy_clear(unsigned char* dest) {
-    memcpy(dest, __g_rcv, __g_rcv_i);
-    uint16_t len = __g_rcv_i;
-    __clear_g_rcv();
+    memcpy(dest, __uart_rcv_buf, __uart_rcv_buf_i);
+    uint16_t len = __uart_rcv_buf_i;
+    __uart_clear_rcv_buf();
     return len;
 }
 
