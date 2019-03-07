@@ -14,6 +14,11 @@ BAUD  = 9600UL
 ## If you move either the current folder or the Library folder, you'll 
 ##  need to change this path to match.
 LIBDIR = ./lib
+LIBDIR_NHD_LCD = ./lib/nhd_lcd
+LIBDIR_EEPROM = ./lib/eeprom
+LIBDIR_NFC = ./lib/nfc
+LIBDIR_SPI = ./lib/spi
+LIBDIR_UART = ./lib/uart
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -54,12 +59,12 @@ TARGET = main
 # Object files: will find all .c/.h files in current directory
 #  and in LIBDIR.  If you have any other (sub-)directories with code,
 #  you can add them in to SOURCES below in the wildcard statement.
-SOURCES=$(wildcard *.c $(LIBDIR)/*.c)
+SOURCES=$(wildcard *.c $(LIBDIR)/*.c $(LIBDIR_NHD_LCD)/*.c $(LIBDIR_EEPROM)/*.c $(LIBDIR_NFC)/*.c $(LIBDIR_SPI)/*.c $(LIBDIR_UART)/*.c)
 OBJECTS=$(SOURCES:.c=.o)
 HEADERS=$(SOURCES:.c=.h)
 
 ## Compilation options, type man avr-gcc if you're curious.
-CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. -I$(LIBDIR)
+CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. -I$(LIBDIR) -I$(LIBDIR_NHD_LCD) -I$(LIBDIR_EEPROM) -I$(LIBDIR_NFC) -I$(LIBDIR_SPI) -I$(LIBDIR_UART)
 CFLAGS = -Os -g -std=gnu99 -Wall
 ## Use short (8-bit) data types 
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 

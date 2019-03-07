@@ -9,7 +9,6 @@
 #include <spi_macros.h>
 #include <eeprom.h>
 #include <nhd_lcd_macros.h>
-#include <nhd_lcd_letters.c>
 
 
 const char __ltr_a[NHD_LCD_CHAR_WIDTH] =    {0x3F, 0x50, 0x50, 0x50, 0x3F, 0x00};
