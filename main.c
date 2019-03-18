@@ -42,13 +42,21 @@ int main() {
     init_uart(0x1);
     i2c_init();
 
-    rtc_set_year(2019);
-    uint16_t year = rtc_get_year();
+    /*
+    rtc_send_year(2019, 1);
+    rtc_send_month(2, 1);
+    rtc_send_date(29, 1);
+    */
+    // rtc_send_sec(5, 1);
+    uint8_t data = rtc_rcv_sec(1);
+    // rtc_clock_start(1);
+    // rtc_clock_stop(1);
+
 
     char buf[10];
     for (uint8_t i = 0; i < 1; ++i) {
         uart_transmit_string("value: ", 7);
-        snprintf(buf, 10, "%d", year);
+        snprintf(buf, 10, "%d", data);
         uart_transmit_string(buf, strlen(buf));
         uart_transmit_string("\r\n", 2);
     }
