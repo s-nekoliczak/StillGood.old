@@ -34,7 +34,8 @@
 #define NHD_LCD_NUM_CHARS_PER_LINE      22
 #define NHD_LCD_BYTE_SIZE               8
 
-
+// Set the column in a row to all blank pixels
+#define NHD_LCD_ROW_COL_BLANK           0x00
 
 #define NHD_LCD_PORT                    PORTB
 #define NHD_LCD_DDR                     DDRB

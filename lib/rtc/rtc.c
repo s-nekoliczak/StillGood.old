@@ -121,14 +121,20 @@ uint8_t rtc_send_year(uint16_t year, uint8_t close_ctn) {
     }
     uint8_t year_arr[1] = { __rtc_year_to_rtcyear(year) };
 
-    return rtc_send_data(RTC_ADDR_YEAR, year_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_YEAR, year_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int16_t rtc_rcv_year(uint8_t close_ctn) {
     uint8_t rtcyear_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_YEAR, rtcyear_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -151,14 +157,20 @@ uint8_t rtc_send_month(uint8_t month, uint8_t close_ctn) {
     }
     uint8_t month_arr[1] = { __rtc_month_to_rtcmonth(month) };
 
-    return rtc_send_data(RTC_ADDR_MONTH, month_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_MONTH, month_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int8_t rtc_rcv_month(uint8_t close_ctn) {
     uint8_t rtcmonth_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_MONTH, rtcmonth_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -184,7 +196,7 @@ uint8_t __rtc_date_to_rtcdate(uint8_t date) {
 
 uint8_t rtc_send_date(uint8_t date, uint8_t close_ctn) {
 
-    uint8_t month = rtc_rcv_month(1);
+    uint8_t month = rtc_rcv_month(0);
     uint8_t max_date = __rtc_month_max_date[month];
     if (month == RTC_MONTH_FEB) {
         if (rtc_is_leap_year() == 1) {
@@ -200,14 +212,20 @@ uint8_t rtc_send_date(uint8_t date, uint8_t close_ctn) {
 
     uint8_t date_arr[1] = { __rtc_date_to_rtcdate(date) };
 
-    return rtc_send_data(RTC_ADDR_DATE, date_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_DATE, date_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int8_t rtc_rcv_date(uint8_t close_ctn) {
     uint8_t rtcdate_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_DATE, rtcdate_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -232,14 +250,20 @@ uint8_t rtc_send_day(uint8_t day, uint8_t close_ctn) {
 
     uint8_t day_arr[1] = { __rtc_day_to_rtcday(day) };
 
-    return rtc_send_data(RTC_ADDR_DAY, day_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_DAY, day_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int8_t rtc_rcv_day(uint8_t close_ctn) {
     uint8_t rtcday_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_DAY, rtcday_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -269,14 +293,20 @@ uint8_t rtc_send_hour(uint8_t hour, uint8_t close_ctn) {
 
     uint8_t hour_arr[1] = { __rtc_hour_to_rtchour(hour) };
 
-    return rtc_send_data(RTC_ADDR_HOUR, hour_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_HOUR, hour_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int8_t rtc_rcv_hour(uint8_t close_ctn) {
     uint8_t rtchour_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_HOUR, rtchour_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -303,14 +333,20 @@ uint8_t rtc_send_mnt(uint8_t mnt, uint8_t close_ctn) {
 
     uint8_t mnt_arr[1] = { __rtc_mnt_to_rtcmnt(mnt) };
 
-    return rtc_send_data(RTC_ADDR_MINUTE, mnt_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_MINUTE, mnt_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int8_t rtc_rcv_mnt(uint8_t close_ctn) {
     uint8_t rtcmnt_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_MINUTE, rtcmnt_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -347,14 +383,20 @@ uint8_t rtc_send_sec(uint8_t sec, uint8_t close_ctn) {
     uint8_t is_running = rtc_clock_is_running(1);
     uint8_t sec_arr[1] = { __rtc_sec_to_rtcsec(sec, is_running) };
 
-    return rtc_send_data(RTC_ADDR_SECOND, sec_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_SECOND, sec_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 int8_t rtc_rcv_sec(uint8_t close_ctn) {
     uint8_t rtcsec_arr[1];
     uint8_t st = rtc_rcv_data(RTC_ADDR_SECOND, rtcsec_arr, 1, close_ctn);
     if (st != I2C_MSTR_RCV_RCV_BYTE_ACK) {
-        __rtc_last_err = st;
         return -1;
     }
 
@@ -362,14 +404,28 @@ int8_t rtc_rcv_sec(uint8_t close_ctn) {
 }
 
 uint8_t rtc_clock_start(uint8_t close_ctn) {
-    uint8_t clk_arr[1] = { (0 << 7) | (0x7F & rtc_rcv_sec(1)) };
+    uint8_t clk_arr[1] = { (0 << 7) | (0x7F & rtc_rcv_sec(0)) };
 
-    return rtc_send_data(RTC_ADDR_SECOND, clk_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_SECOND, clk_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
 uint8_t rtc_clock_stop(uint8_t close_ctn) {
-    uint8_t clk_arr[1] = { (1 << 7) | (0x7F & rtc_rcv_sec(1))};
+    uint8_t clk_arr[1] = { (1 << 7) | (0x7F & rtc_rcv_sec(0))};
 
-    return rtc_send_data(RTC_ADDR_SECOND, clk_arr, 1, close_ctn);
+    uint8_t st = rtc_send_data(RTC_ADDR_SECOND, clk_arr, 1, close_ctn);
+
+    if (st != I2C_MSTR_TRANS_SEND_BYTE_ACK) {
+        i2c_stop_send();
+        return 0;
+    }
+
+    return 1;
 }
 
