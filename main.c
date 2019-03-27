@@ -19,8 +19,49 @@
 //temp defines
 #include <avr/interrupt.h>
 
-#define RTC_ADDR        0x68
 
+/*
+74HC4052E mux notes
+Connect S1 pin to GND
+
+A Bank is for MCU TXD / MUX RXD
+B Bank is for MCU RXD / MUX TXD
+
+0 is for NFC
+1 is for BLUETOOTH
+
+A0 - NFC RXD
+B0 - NFC TXD
+
+A1 - BLUETOOTH RXD
+B1 - BLUETOOTH TXD
+*/
+
+#define USEL_PORT               PORTD
+#define USEL_SWITCH             PD2
+#define USEL_SEL                PD3
+
+#define USEL_SWITCH_ON          USEL_PORT &= ~(1 << USEL_SWITCH)
+#define USEL_SWITCH_OFF         USEL_PORT |= (1 << USEL_SWITCH)
+
+#define USEL_SEL_AB_0           USEL_PORT &= ~(1 << USEL_SEL)
+#define USEL_SEL_AB_1           USEL_PORT |= (1 << USEL_SEL)
+
+void usel_uart_on() {
+    USEL_SWITCH_ON;
+};
+
+void usel_uart_off() {
+    USEL_SWITCH_OFF;
+};
+
+void usel_nfc() {
+    USEL_SEL_AB_0;
+};
+
+void usel_bt() {
+    USEL_SEL_AB_1;
+};
 
 static void init_mcu(void) {
     // No clock divider.
@@ -40,53 +81,27 @@ int main() {
     // 1/0x1 per the datasheet for 3.6864MHz/115200 baud
     //
     init_uart(0x1);
-    init_spi();
-    i2c_init();
+    // init_spi();
+    // i2c_init();
 
-    /*
-    rtc_send_year(2019, 1);
-    rtc_send_month(2, 1);
-    rtc_send_date(29, 1);
-    rtc_send_mnt(20, 1);
-    rtc_send_mnt(55, 1);
-    rtc_send_sec(24, 1);
-    // rtc_send_sec(5, 1);
-    uint8_t data = rtc_rcv_mnt(1);
-    // rtc_clock_start(1);
-    // rtc_clock_stop(1);
+    usel_uart_on();
+    usel_nfc();
 
+    nfc_wakeup();
+    nfc_inlistpsvtarget();
+    nfc_authenticate();
 
-    char buf[10];
-    for (uint8_t i = 0; i < 1; ++i) {
-        uart_transmit_string("value: ", 7);
-        snprintf(buf, 10, "%d", data);
-        uart_transmit_string(buf, strlen(buf));
-        uart_transmit_string("\r\n", 2);
+    unsigned char data[16] = {0xCF, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB};
+    nfc_write_block(data, 0x04);
+
+    unsigned char payload[16];
+    nfc_read_block(payload, 0x04);
+
+    DDRC = 0xFF;
+
+    if (payload[0] == 0xCF) {
+        PORTC |= (1<<PC5);
     }
-    */
-
-    /*
-    nhd_lcd_init();
-    nhd_lcd_disp_on();
-    nhd_lcd_wipe_screen();
-    char test_str[16] = "NEW STr testing";
-
-    char header_str[23] = "";
-
-    nhd_lcd_create_centered_str(test_str, 15, header_str);
-
-    nhd_lcd_print_row_str(7, header_str, strlen(header_str), 0, 0);
-    nhd_lcd_print_row_str(6, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_print_row_str(5, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_print_row_str(4, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_print_row_str(3, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_print_row_str(2, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_print_row_str(1, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_print_row_str(0, test_str, strlen(test_str), 1, 0);
-    nhd_lcd_sel_row(4, 1);
-    nhd_lcd_sel_row(5, 1);
-    nhd_lcd_sel_row(5, 0);
-    */
 
     while(1) {
         ;
