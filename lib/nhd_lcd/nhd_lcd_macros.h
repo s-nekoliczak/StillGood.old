@@ -56,13 +56,13 @@
 #define NHD_LCD_RESET_HIGH              NHD_LCD_PORT |= (1 << NHD_LCD_RESET)
 #define NHD_LCD_RESET_LOW               NHD_LCD_PORT &= ~(1 << NHD_LCD_RESET)
 
-#define NHD_LCD_LIGHT_PORT              PORTC
-#define NHD_LCD_LIGHT_DDR               DDRC
+#define NHD_LCD_LIGHT_PORT              PORTD
+#define NHD_LCD_LIGHT_DDR               DDRD
 
-#define NHD_LCD_BL                      PC0
-#define NHD_LCD_RED                     PC1
-#define NHD_LCD_GREEN                   PC2
-#define NHD_LCD_BLUE                    PC3
+#define NHD_LCD_BL                      PD7
+#define NHD_LCD_RED                     PD6
+#define NHD_LCD_GREEN                   PD5
+#define NHD_LCD_BLUE                    PD4
 
 #define NHD_LCD_BL_ON                   NHD_LCD_LIGHT_PORT |= (1 << NHD_LCD_BL)
 #define NHD_LCD_BL_OFF                  NHD_LCD_LIGHT_PORT &= ~(1 << NHD_LCD_BL)
