@@ -38,6 +38,7 @@ B1 - BLUETOOTH TXD
 */
 
 #define USEL_PORT               PORTD
+#define USEL_DDR                DDRD
 #define USEL_SWITCH             PD2
 #define USEL_SEL                PD3
 
@@ -84,22 +85,29 @@ int main() {
     // init_spi();
     // i2c_init();
 
+    DDRD = 0xFF;
+
     usel_uart_on();
     usel_nfc();
 
-    nfc_wakeup();
-    nfc_inlistpsvtarget();
-    nfc_authenticate();
+    USEL_DDR = (1 << PD2) | (1 << PD3);
 
-    unsigned char data[16] = {0xCF, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB};
-    nfc_write_block(data, 0x04);
+    PORTC |= (1<<PC4);
+
+
+    uint8_t rep_good;
+    rep_good = nfc_wakeup();
+    rep_good = nfc_inlistpsvtarget();
+    rep_good = nfc_authenticate();
+
+    unsigned char data[16] = {0xEF, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB};
+    rep_good = nfc_write_block(data, 0x04);
 
     unsigned char payload[16];
-    nfc_read_block(payload, 0x04);
+    rep_good = nfc_read_block(payload, 0x04);
 
-    DDRC = 0xFF;
 
-    if (payload[0] == 0xCF) {
+    if (payload[0] == 0xEF) {
         PORTC |= (1<<PC5);
     }
 
