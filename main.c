@@ -11,6 +11,7 @@
 #include <nhd_lcd.h>
 #include <i2c.h>
 #include <rtc.h>
+#include <bluetooth.h>
 
 
 #include <util/delay.h>
@@ -85,15 +86,34 @@ int main() {
     // init_spi();
     // i2c_init();
 
-    DDRD = 0xFF;
-
-    usel_uart_on();
-    usel_nfc();
-
     USEL_DDR = (1 << PD2) | (1 << PD3);
+    usel_uart_on();
+    usel_bt();
+
+    _delay_ms(500);
+
+    bt_cmd_init();
+    _delay_ms(200);
+    bt_cmd_set_mode(0);
+    _delay_ms(200);
+    bt_cmd_set_device_name("sg_remote");
+    _delay_ms(200);
+    bt_cmd_set_pin("9876");
+    _delay_ms(200);
+    bt_cmd_kill();
+    _delay_ms(200);
+
+    while(1) {
+        ;
+    }
+
+}
+
+
+
+/*
 
     PORTC |= (1<<PC4);
-
 
     uint8_t rep_good;
     rep_good = nfc_wakeup();
@@ -110,11 +130,4 @@ int main() {
     if (payload[0] == 0xEF) {
         PORTC |= (1<<PC5);
     }
-
-    while(1) {
-        ;
-    }
-
-}
-
-
+*/

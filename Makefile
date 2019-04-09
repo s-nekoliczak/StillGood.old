@@ -21,6 +21,7 @@ LIBDIR_SPI = ./lib/spi
 LIBDIR_UART = ./lib/uart
 LIBDIR_I2C = ./lib/i2c
 LIBDIR_RTC = ./lib/rtc
+LIBDIR_BT = ./lib/bluetooth
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -61,12 +62,12 @@ TARGET = main
 # Object files: will find all .c/.h files in current directory
 #  and in LIBDIR.  If you have any other (sub-)directories with code,
 #  you can add them in to SOURCES below in the wildcard statement.
-SOURCES=$(wildcard *.c $(LIBDIR)/*.c $(LIBDIR_NHD_LCD)/*.c $(LIBDIR_EEPROM)/*.c $(LIBDIR_NFC)/*.c $(LIBDIR_SPI)/*.c $(LIBDIR_UART)/*.c $(LIBDIR_I2C)/*.c $(LIBDIR_RTC)/*.c)
+SOURCES=$(wildcard *.c $(LIBDIR)/*.c $(LIBDIR_NHD_LCD)/*.c $(LIBDIR_EEPROM)/*.c $(LIBDIR_NFC)/*.c $(LIBDIR_SPI)/*.c $(LIBDIR_UART)/*.c $(LIBDIR_I2C)/*.c $(LIBDIR_RTC)/*.c $(LIBDIR_BT)/*.c)
 OBJECTS=$(SOURCES:.c=.o)
 HEADERS=$(SOURCES:.c=.h)
 
 ## Compilation options, type man avr-gcc if you're curious.
-CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. -I$(LIBDIR) -I$(LIBDIR_NHD_LCD) -I$(LIBDIR_EEPROM) -I$(LIBDIR_NFC) -I$(LIBDIR_SPI) -I$(LIBDIR_UART) -I$(LIBDIR_I2C) -I$(LIBDIR_RTC)
+CPPFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -I. -I$(LIBDIR) -I$(LIBDIR_NHD_LCD) -I$(LIBDIR_EEPROM) -I$(LIBDIR_NFC) -I$(LIBDIR_SPI) -I$(LIBDIR_UART) -I$(LIBDIR_I2C) -I$(LIBDIR_RTC) -I$(LIBDIR_BT)
 CFLAGS = -Os -g -std=gnu99 -Wall
 ## Use short (8-bit) data types 
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
