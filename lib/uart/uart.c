@@ -8,11 +8,21 @@
 #include <util/delay.h>
 
 #define G_RCV_SIZE          256
+#define UART_MCU_FREQ       3686400
+
+#define UART_ENABLE_TIMER       TIMSK1 |= (1  << OCIE1A)
+#define UART_DISABLE_TIMER      TIMSK1 &= ~(1  << OCIE1A)
 
 unsigned char __uart_rcv_buf[G_RCV_SIZE];
 uint16_t __uart_rcv_buf_i;
+int __uart_icr1_val;
+uint8_t __uart_is_first_char;
+uint8_t __uart_have_reply;
 
-void init_uart(uint16_t baud) {
+void init_uart(uint16_t baud, uint16_t wait_ms) {
+
+    __uart_is_first_char = 1;
+    __uart_have_reply = 0;
 
     __uart_rcv_buf_i = 0;
 
@@ -38,11 +48,29 @@ void init_uart(uint16_t baud) {
         |   (1 << UCSZ01)       // 8-bit message size
         |   (1 << UCSZ00)       // 8-bit message size
         |   (0 << UCPOL0);      // Disable clock polarity for async mode
-}
 
+    // Enable timer for response waiting.
+    TCCR1B =
+            (1 << WGM13)        // CTC mode
+        |   (1 << WGM12)
+        |   (1 << CS12);        // 256x pre-scaler
+
+    float ms = (UART_MCU_FREQ / 256) * (wait_ms / 1000);
+    __uart_icr1_val = (int)ms;
+}
 
 ISR(USART_RX_vect) {
     __uart_rcv_buf[__uart_rcv_buf_i++] = UDR0;
+    if (__uart_is_first_char) {
+        ICR1 = __uart_icr1_val;
+        __uart_is_first_char = 0;
+        UART_ENABLE_TIMER;
+    }
+}
+
+ISR(TIMER1_COMPA_vect) {
+    UART_DISABLE_TIMER;
+    __uart_have_reply = 1;
 }
 
 // Taken from atmega328p datasheet example
@@ -71,14 +99,15 @@ void uart_transmit_string(unsigned char* str, uint16_t len) {
     }
 }
 
-// TODO Make this less hacky somehow?
-void uart_wait_for_reply() {
-    _delay_ms(500);
-}
-
 void __uart_clear_rcv_buf() {
     memset(__uart_rcv_buf, 0, G_RCV_SIZE);
     __uart_rcv_buf_i = 0;
+}
+
+void uart_clear() {
+    __uart_is_first_char = 1;
+    __uart_have_reply = 0;
+    __uart_clear_rcv_buf();
 }
 
 // Copies contents to dest array and clears __uart_rcv_buf for future use.
@@ -87,7 +116,16 @@ void __uart_clear_rcv_buf() {
 uint16_t uart_copy_clear(unsigned char* dest) {
     memcpy(dest, __uart_rcv_buf, __uart_rcv_buf_i);
     uint16_t len = __uart_rcv_buf_i;
-    __uart_clear_rcv_buf();
+    uart_clear();
     return len;
 }
+
+uint8_t uart_have_reply() {
+    return __uart_have_reply;
+}
+
+
+
+
+
 

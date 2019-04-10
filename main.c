@@ -20,50 +20,8 @@
 //temp defines
 #include <avr/interrupt.h>
 
+volatile uint8_t uart_replied;
 
-/*
-74HC4052E mux notes
-Connect S1 pin to GND
-
-A Bank is for MCU TXD / MUX RXD
-B Bank is for MCU RXD / MUX TXD
-
-0 is for NFC
-1 is for BLUETOOTH
-
-A0 - NFC RXD
-B0 - NFC TXD
-
-A1 - BLUETOOTH RXD
-B1 - BLUETOOTH TXD
-*/
-
-#define USEL_PORT               PORTD
-#define USEL_DDR                DDRD
-#define USEL_SWITCH             PD2
-#define USEL_SEL                PD3
-
-#define USEL_SWITCH_ON          USEL_PORT &= ~(1 << USEL_SWITCH)
-#define USEL_SWITCH_OFF         USEL_PORT |= (1 << USEL_SWITCH)
-
-#define USEL_SEL_AB_0           USEL_PORT &= ~(1 << USEL_SEL)
-#define USEL_SEL_AB_1           USEL_PORT |= (1 << USEL_SEL)
-
-void usel_uart_on() {
-    USEL_SWITCH_ON;
-};
-
-void usel_uart_off() {
-    USEL_SWITCH_OFF;
-};
-
-void usel_nfc() {
-    USEL_SEL_AB_0;
-};
-
-void usel_bt() {
-    USEL_SEL_AB_1;
-};
 
 static void init_mcu(void) {
     // No clock divider.
@@ -79,19 +37,17 @@ static void init_mcu(void) {
 
 int main() {
 
+    uart_replied = 0;
+
     init_mcu();
     // 1/0x1 per the datasheet for 3.6864MHz/115200 baud
     //
-    init_uart(0x1);
+    init_uart(0x1, 10);
     // init_spi();
     // i2c_init();
 
-    USEL_DDR = (1 << PD2) | (1 << PD3);
-    usel_uart_on();
-    usel_bt();
-
-    _delay_ms(500);
-
+/*
+    _delay_ms(200);
     bt_cmd_init();
     _delay_ms(200);
     bt_cmd_set_mode(0);
@@ -102,32 +58,25 @@ int main() {
     _delay_ms(200);
     bt_cmd_kill();
     _delay_ms(200);
+    */
 
     while(1) {
-        ;
+        _delay_ms(10);
+        if (uart_have_reply()) {
+            uint16_t rep_len = uart_rcv_buf_size();
+            unsigned char* rep = (unsigned char*)calloc(rep_len, sizeof(unsigned char));
+            uart_copy_clear(rep);
+            // uart_clear();
+            // if (strcmp(rep, "abc") == 0) {
+            if (rep[0] == 'a') {
+                uart_transmit_string("got abc\n", 8);
+            } else {
+                uart_transmit_string("wrong\n", 6);
+            }
+            free(rep);
+        }
     }
 
 }
 
 
-
-/*
-
-    PORTC |= (1<<PC4);
-
-    uint8_t rep_good;
-    rep_good = nfc_wakeup();
-    rep_good = nfc_inlistpsvtarget();
-    rep_good = nfc_authenticate();
-
-    unsigned char data[16] = {0xEF, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB, 0xAB};
-    rep_good = nfc_write_block(data, 0x04);
-
-    unsigned char payload[16];
-    rep_good = nfc_read_block(payload, 0x04);
-
-
-    if (payload[0] == 0xEF) {
-        PORTC |= (1<<PC5);
-    }
-*/
